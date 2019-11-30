@@ -9,143 +9,190 @@ class WindowContent:
     title: str
     subtitle: str
     content: str
+    slide_name: str
 
 def main_menu():
     return WindowContent("What's new in Python 3.8",
                          f"Alexander Hagerman DerbyPy November 2019",
                          """
-                                    [1] walrus := assignment_expressions
-                                    [2] from sys import audit
-                                    [3] typing protocols
-                                    [4] vectorcall
-                                    [5] release notes
-                                    [6] release schedule
+                                                    [1] walrus := assignment_expressions
+                                                    [2] from sys import audit
+                                                    [3] typing protocols
+                                                    [4] asnycio
+                                                    [5] vectorcall
+                                                    [6] release notes
+                                                    [7] release schedule
                          """,
+                         "Table of Contents",
                          )
 
 def window_one():
     return WindowContent("Assignment Expressions",
                          "Naming the result of expressions",
                          """
-                            # Handle a matched regex
-                            if (match := pattern.search(data)) is not None:
-                                # Do something with match
+                                            # Handle a matched regex
+                                            if (match := pattern.search(data)) is not None:
+                                                # Do something with match
 
-                            # A loop that can't be trivially rewritten using 2-arg iter()
-                            while chunk := file.read(8192):
-                            process(chunk)
+                                            # A loop that can't be trivially rewritten using 2-arg iter()
+                                            while chunk := file.read(8192):
+                                            process(chunk)
 
-                            # Reuse a value that's expensive to compute
-                            [y := f(x), y**2, y**3]
+                                            # Reuse a value that's expensive to compute
+                                            [y := f(x), y**2, y**3]
 
-                            # Share a subexpression between a comprehension filter
-                            # clause and its output
-                            filtered_data = [y for x in data if (y := f(x)) is not None]
-                         """)
+                                            # Share a subexpression between a comprehension filter
+                                            # clause and its output
+                                            filtered_data = [y for x in data if (y := f(x)) is not None]
+                         """,
+                         "Slide 1",
+                         )
 
 def window_two():
     return WindowContent("Audithooks and metadata",
                          "No more secrets",
                          """
-                      import sys
-                      sys.audit(django.execute_sql, sql, params)
+                                      import sys
+                                      sys.audit(django.execute_sql, sql, params)
 
-                      $ manage.py migrate
-                      $ Operations to perform: Apply all migrations:
-                      $ Running migrations:
-                      $         django.execute_sql(SELECT "django_migrations"."app"m "dj..., ())
-                      $         django.execute_sql(.......)
+                                      $ manage.py migrate
+                                      $ Operations to perform: Apply all migrations:
+                                      $ Running migrations:
+                                      $         django.execute_sql(SELECT "django_migrations"."app"m "dj..., ())
+                                      $         django.execute_sql(.......)
 
 
-                      https://mastodon.social/@freakboy3742/103019925896462510
+                                      https://mastodon.social/@freakboy3742/103019925896462510
                         """,
+                         "Slide 2",
                          )
 
 def window_three():
     return WindowContent("Typehint Updates",
                          "Protocols, TypedDict and more",
                          """
-                                from typing import Iterable
-                                from typing_extensions import Protocol
+                                                from typing import Iterable
+                                                from typing_extensions import Protocol
 
-                                class SupportsClose(Protocol):
-                                    def close(self) -> None:
-                                    ...  # Empty method body (explicit '...')
+                                                class SupportsClose(Protocol):
+                                                    def close(self) -> None:
+                                                    ...  # Empty method body (explicit '...')
 
-                                class Resource:  # No SupportsClose base class!
-                                    # ... some methods ...
+                                                class Resource:  # No SupportsClose base class!
+                                                    # ... some methods ...
 
-                                    def close(self) -> None:
-                                    self.resource.release()
+                                                    def close(self) -> None:
+                                                    self.resource.release()
 
-                                def close_all(items: Iterable[SupportsClose]) -> None:
-                                    for item in items:
-                                        item.close()
+                                                def close_all(items: Iterable[SupportsClose]) -> None:
+                                                    for item in items:
+                                                        item.close()
 
-                                close_all([Resource(), open('some/file')])
+                                                close_all([Resource(), open('some/file')])
 
-                                Also included in 3.8: Literal, Final and TypedDict
+                                                Also included in 3.8: Literal, Final and TypedDict
                          """,
+                         "Slide 3",
                          )
 
 def window_four():
-    return WindowContent("C Updates and Python Optimizations",
-                         "Gotta go fast!",
+    return WindowContent("Asyncio",
+                         "",
                          """
-                        C API for Python Initialization Configuration.
+                                         Experiment in the REPL:
 
-                        C API for CPython, the “vectorcall” calling protocol allowing
-                        faster calls to internal Python methods without temp objects.
+                                         `python -m asyncio`
 
-                        Many shutil functions now use platform specific "fast-copy" syscalls.
+                                         Make things easier with .run
 
-                        Sped-up field lookups in collections.namedtuple(). They are now
-                        the fastest form of instance variable lookup in Python.
+                                             import asyncio
 
-                        Doubled the speed of class variable writes. 
+                                             async def main():
+                                                 await asyncio.sleep(0)
+                                                 return 42
 
-                        Reduced overhead of converting arguments passed to many builtin
-                        functions. This sped up calling some simple builtins 20–50%.
+                                             asyncio.run(main())
 
-                        LOAD_GLOBAL instruction now uses new “per opcode cache” mechanism.
-                        It is about 40% faster now.
+                                         vs.
+
+                                             import asyncio
+
+                                             async def main():
+                                                 await asyncio.sleep(0)
+                                                 return 42
+
+                                             loop = asyncio.new_event_loop()
+                                             asyncio.set_event_loop(loop)
+                                             try:
+                                                 loop.run_until_complete(main())
+                                             finally:
+                                                 asyncio.set_event_loop(None)
+                                                 loop.close()
                          """,
+                         "Slide 4",
                          )
 
 def window_five():
-    return WindowContent("Release Notes",
-                         "",
+    return WindowContent("C Updates and Python Optimizations",
+                         "Gotta go fast!",
                          """
-                            https://docs.python.org/3.9/whatsnew/3.8.html
+                                        C API for Python Initialization Configuration.
 
-                            https://docs.python.org/3.9/whatsnew/changelog.html#changelog
-                         """
+                                        C API for CPython, the “vectorcall” calling protocol allowing
+                                        faster calls to internal Python methods without temp objects.
+
+                                        Many shutil functions now use platform specific "fast-copy" syscalls.
+
+                                        Sped-up field lookups in collections.namedtuple(). They are now
+                                        the fastest form of instance variable lookup in Python.
+
+                                        Doubled the speed of class variable writes. 
+
+                                        Reduced overhead of converting arguments passed to many builtin
+                                        functions. This sped up calling some simple builtins 20–50%.
+
+                                        LOAD_GLOBAL instruction now uses new “per opcode cache” mechanism.
+                                        It is about 40% faster now.
+                         """,
+                         "Slide 5",
                          )
 
 def window_six():
+    return WindowContent("Release Notes",
+                         "",
+                         """
+                                            https://docs.python.org/3.9/whatsnew/3.8.html
+
+                                            https://docs.python.org/3.9/whatsnew/changelog.html#changelog
+                         """,
+                         "Slide 6",
+                         )
+
+def window_seven():
     return WindowContent("Release Schedule",
                          "",
                          """
-                Releases
-                --------
-                3.8.0 release: Monday, 2019-10-14
+                                Releases
+                                --------
+                                3.8.0 release: Monday, 2019-10-14
 
-                Subsequent bugfix releases at a bi-monthly cadence.
+                                Subsequent bugfix releases at a bi-monthly cadence.
 
-                Expected: -
-                3.8.1 candidate 1: Monday, 2019-12-09
-                3.8.1 final: Monday, 2019-12-16
+                                Expected: -
+                                3.8.1 candidate 1: Monday, 2019-12-09
+                                3.8.1 final: Monday, 2019-12-16
 
-                3.8 Lifespan
-                ------------
+                                3.8 Lifespan
+                                ------------
 
-                3.8 will receive bugfix updates approximately every 1-3 months for approximately 18 months.
-                After the release of 3.9.0 final, a final 3.8 bugfix update will be released. After that,
-                it is expected that security updates (source only) will be released until 5 years after the
-                release of 3.8 final, so until approximately October 2024.
+                                3.8 will receive bugfix updates approximately every 1-3 months for approximately 18 months.
+                                After the release of 3.9.0 final, a final 3.8 bugfix update will be released. After that,
+                                it is expected that security updates (source only) will be released until 5 years after the
+                                release of 3.8 final, so until approximately October 2024.
 
-                https://www.python.org/dev/peps/pep-0569/
-                         """
+                                https://www.python.org/dev/peps/pep-0569/
+                         """,
+                         "Slide 7",
                          )
 
 def render(stdscr):
@@ -168,7 +215,7 @@ def render(stdscr):
 
     # Default window content
     content = main_menu()
-    status = "Press 'q' to exit | PRESENTING | Pos: {}, {} | Last key pressed: {} | Python {}"
+    status = "Press 'q' to exit | PRESENTING | {} | Pos: {}, {} | Last key pressed: {} | Python {}"
     k = ord("-")
     _py = f"{'-' * 4}🐍{'-' * 4}"
 
@@ -199,6 +246,8 @@ def render(stdscr):
             content = window_five()
         elif k == 54:
             content = window_six()
+        elif k == 55:
+            content = window_seven()
         elif k == 77 or k == 109:
             content = main_menu()
 
@@ -217,7 +266,7 @@ def render(stdscr):
 
         # Render status bar
         stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(height-1, 0, status.format(cursor_x, cursor_y, chr(k), f"{sys.version_info.major}.{sys.version_info.minor}"))
+        stdscr.addstr(height-1, 0, status.format(content.slide_name, cursor_x, cursor_y, chr(k), f"{sys.version_info.major}.{sys.version_info.minor}"))
 
         stdscr.addstr(height-1, len(status), " " * (width - len(status) - 1))
         stdscr.attroff(curses.color_pair(3))
